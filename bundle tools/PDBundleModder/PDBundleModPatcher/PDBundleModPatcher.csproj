@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{C90DA7FE-E96B-48E8-8292-503587E95DE4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PDBundleModPatcher</RootNamespace>
+    <AssemblyName>PDBundleModPatcher</AssemblyName>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.16.3.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;LINUX</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\program_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>PDBundleModPatcher.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release LINUX|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release LINUX\</OutputPath>
+    <DefineConstants>TRACE;LINUX</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Win|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release WIN\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release LINUX|x86'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release Win|x86'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release WIN\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BackupEntry.cs" />
+    <Compile Include="BundleEntryPath.cs" />
+    <Compile Include="BundleExtraction.cs" />
+    <Compile Include="log.cs" />
+    <Compile Include="CreateMods\ModVariableOption.cs" />
+    <Compile Include="Diesel\DieselPackage.cs" />
+    <Compile Include="ExtraOptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExtraOptForm.Designer.cs">
+      <DependentUpon>ExtraOptForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModTypes\BundleMod.cs" />
+    <Compile Include="BundleRewriter.cs" />
+    <Compile Include="Diesel\DieselString.cs" />
+    <Compile Include="Diesel\DieselStringEntry.cs" />
+    <Compile Include="Diesel\DieselStrings.cs" />
+    <Compile Include="ModManagement\FileControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModManagement\FileControl.Designer.cs">
+      <DependentUpon>FileControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateMods\ManagePresets.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateMods\ManagePresets.Designer.cs">
+      <DependentUpon>ManagePresets.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateMods\ManageStrings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateMods\ManageStrings.Designer.cs">
+      <DependentUpon>ManageStrings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModManagement\ModDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModManagement\ModDetails.Designer.cs">
+      <DependentUpon>ModDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModManagement\ModOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModManagement\ModOptions.Designer.cs">
+      <DependentUpon>ModOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateMods\ModVariable.cs" />
+    <Compile Include="CreateMods\ModVariables.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateMods\ModVariables.Designer.cs">
+      <DependentUpon>ModVariables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModManagement\ModOptionsToolbox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModManagement\ModOptionsToolbox.Designer.cs">
+      <DependentUpon>ModOptionsToolbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModManagement\ModsDatabase.cs" />
+    <Compile Include="ModTypes\OverrideMod.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProgramSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CreateMods\SoundPatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateMods\SoundPatch.Designer.cs">
+      <DependentUpon>SoundPatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SerializableDictionary.cs" />
+    <EmbeddedResource Include="ExtraOptForm.resx">
+      <DependentUpon>ExtraOptForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModManagement\FileControl.resx">
+      <DependentUpon>FileControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateMods\ManageStrings.resx">
+      <DependentUpon>ManageStrings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModManagement\ModDetails.resx">
+      <DependentUpon>ModDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModManagement\ModOptions.resx">
+      <DependentUpon>ModOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateMods\ModVariables.resx">
+      <DependentUpon>ModVariables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModManagement\ModOptionsToolbox.resx">
+      <DependentUpon>ModOptionsToolbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="CreateMods\SoundPatch.resx">
+      <DependentUpon>SoundPatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\BundleRewriteItem.datasource" />
+    <None Include="Properties\DataSources\BundleStringEntry.datasource" />
+    <None Include="Properties\DataSources\DieselStringEntry.datasource" />
+    <None Include="Properties\DataSources\ModVariable3.datasource" />
+    <None Include="Properties\DataSources\ModVariableView.datasource" />
+    <None Include="Properties\DataSources\ModVariableView1.datasource" />
+    <None Include="Properties\DataSources\ModVariableView2.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PDBundleModder_Updater\PDBundleModder_Updater\PDBundleModPatcher_Updater.csproj">
+      <Project>{FDAFE5BD-7382-45A9-9506-54E4E41A9D63}</Project>
+      <Name>PDBundleModPatcher_Updater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DieselBundle\DieselBundle.csproj">
+      <Project>{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}</Project>
+      <Name>DieselBundle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PD2SoundBankParser\SoundBankParser.csproj">
+      <Project>{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}</Project>
+      <Name>SoundBankParser</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\warning-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\accept-icon.png" />
+    <EmbeddedResource Include="Resources\remove-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\help-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="program_icon.ico" />
+    <Content Include="Resources\icon_256x256.png" />
+    <Content Include="Resources\program_icon.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,46 @@
+; These lines are commented out, and omitted
+;
+; Types: text/string, byte/ubyte, short/ushort, int/uint, int64/uint64, float, double
+;
+; Side notes: The script is executed sequentially from top to bottom.
+; 
+; These scripts can be used to patch in files without having to update mods with everysingle update. To patch in a file, write up a script and save it as "*filename*.script" and use it as a replacement file.
+
+; Possible script commands:
+replace : HEX DATA (to find) : HEX DATA (to replace with)
+find : HEX DATA (to find)
+find : type : DATA (to find)
+movepos : number (to move from current position by)
+write : HEX DATA (to write)
+write : type : DATA (to write)
+write : data : variablename (This will write the data stored in the variable specified)
+write : position : variablename (This will write the position stored in the variable specified)
+insert : HEX DATA (to write)
+insert : type : DATA (to write)
+insert : data : variablename (This will insert the data stored in the variable specified)
+insert : position : variablename (This will insert the position stored in the variable specified)
+goto : number (This will go to a specified numerical position in the file)
+goto : end (This will go to the end of the file)
+goto : beginning (This will go to the beginning of the file)
+goto : position : variablename (This will go to the specified position in the variable specified)
+savepos : variablename (This will save the current position in the variable specified)
+read : variablename : length (This will read the specified length of data from current position, and then store it in a variable specified).
+delete : length This will remove a specified number of bytes)
+delete : type (This will remove a type-specific number of bytes)
+
+
+; Example script:
+goto : end
+movepos : -4
+savepos : maskname
+insert : string : New Mask Name
+goto : end
+movepos : -4
+savepos : maskdescription
+insert : string : New Mask Description
+find : hash : bm_msk_skull
+movepos : 12
+write : position : maskname
+find : hash : bm_msk_skull_desc
+movepos : 12
+write : position : maskdescription

@@ -1,0 +1,14 @@
+; Lines that begin with a semicolon are ignored.
+@Author Zwagoth
+@Name Example Mod
+@Description This is my example mod. It doesn't actually do anything useful.
+
+; Blank lines are ignored as well.
+; All other lines are treated as file replacement lines.
+; File lines are in the format of <original file path> <colon> <replacement file path>
+; The spaces around the colon are optional, but help readability.
+
+; Removed all the cameras!
+settings/cameras.cameras : my_camera_replacement_file.xml
+; Replaced all sounds with nothing!
+soundbanks/job_esc_park.1.bnk : job_esc_park_replacement.bnk
