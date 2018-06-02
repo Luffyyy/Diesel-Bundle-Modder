@@ -2487,6 +2487,14 @@ namespace PDBundleModPatcher
                     StaticStorage.settings.GameSteamID = 218620;
                     StaticStorage.settings.GameSupportsOverride = !linux;
                 }
+                else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "raid_win64_d3d9_release.exe"))) //Payday 2 Demo
+                {
+                    StaticStorage.settings.Game = "RAID: World War II";
+                    StaticStorage.settings.GameShortName = "Raid WW2";
+                    StaticStorage.settings.GameProcess = "raid_win64_d3d9_release";
+                    StaticStorage.settings.GameSteamID = 414740;
+                    StaticStorage.settings.GameSupportsOverride = true;
+                }
                 else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "all.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe"))) //Payday 2 Demo
                 {
                     StaticStorage.settings.Game = "PAYDAY 2 Demo";
