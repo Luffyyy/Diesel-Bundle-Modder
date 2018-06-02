@@ -30,11 +30,19 @@ namespace DieselBundle
         public bool HasLengthField = false;
 
         /// <summary>
+        ///     Does the header contain information about multiple bundles?
+        /// </summary>
+        public bool multiBundle;
+
+        /// <summary>
+        ///     Is the header from a 64 bit diesel game(such as Raid WW2)?
+        /// </summary>
+        public bool x64;
+
+        /// <summary>
         ///     The header.
         /// </summary>
-        public List<uint> Header = new List<uint>();
-
-
+        public List<ulong> Header = new List<ulong>();
 
         /// <summary>
         /// The _entries.
@@ -48,13 +56,7 @@ namespace DieselBundle
         /// <summary>
         ///     Gets list of bundle file entries
         /// </summary>
-        public List<BundleEntry> Entries
-        {
-            get
-            {
-                return this.entries;
-            }
-        }
+        public List<BundleEntry> Entries {  get { return this.entries; } }
 
         /// <summary>
         ///     Gets or sets
@@ -64,6 +66,147 @@ namespace DieselBundle
         #endregion
 
         #region Public Methods and Operators
+
+        public bool ReadHeader(BinaryReader br) {
+
+            br.BaseStream.Position = 8;
+            if (br.ReadUInt32() == 0 && br.ReadUInt32() != 0)
+                x64 = true;
+            br.BaseStream.Position = 0;
+
+            if (x64)
+            {
+                Header = new List<ulong>{
+                    br.ReadUInt32(),
+				    br.ReadUInt64(),
+				    br.ReadUInt64(),
+ 				    br.ReadUInt64()
+			    };
+            }
+            else
+            {
+                Header = new List<ulong>{
+                    br.ReadUInt32(),//ref offset
+                    br.ReadUInt32(),//tag / count
+                    br.ReadUInt32(),//linux:tag / count
+                    br.ReadUInt32() // offset / count
+                };
+            }
+
+            if (Header[1] != Header[2])
+                Header.Add(br.ReadUInt32());
+
+            ulong itemCount = 0, offset = 0;
+
+            for (int i = 1; i < (Header.Count - 1); i++)
+            {
+                if (Header[i] == Header[i + 1])
+                {
+                    itemCount = Header[i];
+                    if (Header.Count <= i + 2)
+                        Header.Add(br.ReadUInt32());
+
+                    offset = Header[i + 2];
+                    if (i != 1)
+                        HasLengthField = true;
+
+                    break;
+                }
+            }
+
+            if (br.BaseStream.Position < (long)offset)
+            {
+                ulong amount = ((offset - (ulong)br.BaseStream.Position) / 4);
+                for (uint i = 0; i < amount; i++)
+                    Header.Add(br.ReadUInt32());
+            }
+
+            br.BaseStream.Position = (long)offset;
+
+            Header.Add(br.ReadUInt32());
+
+            for (int i = 0; i < (int)itemCount; ++i)
+                ReadEntry(br, i);
+
+            if (itemCount > 0 && !this.HasLengthField)
+                this.entries[this.entries.Count - 1].Length = -1;
+
+            //Footer breakdown
+            /*
+             * uint32 - tag
+             * uint32 - section size
+             * uint32 - count
+             * uint32 - unknown
+             * uint32 - unknown
+             * uint32 - tag?
+             * foreach (count):
+             *  uint64 - hash (extension)
+             *  uint64 - hash (path)
+             * uint32 - end?
+             * uint32 (0) - end
+            */
+            this.Footer = br.ReadBytes((int)(br.BaseStream.Length - br.BaseStream.Position));
+
+            return true;
+        }
+
+        public bool ReadMultiBundleHeader(BinaryReader br, long bundleNum)
+        {
+            //Based of https://steamcommunity.com/app/218620/discussions/15/1474221865204158003/
+            HasLengthField = true;
+            multiBundle = true;
+
+            Header = new List<ulong>()
+            {
+                br.ReadUInt32(), //eof
+                br.ReadUInt32(), //bundle count
+                br.ReadUInt32(), //unknown
+                br.ReadUInt32(), //unknown
+                br.ReadUInt32(), //unknown
+            };
+
+            for (long i = 0; i < (long)Header[1]; i++)
+            {
+                long Index = br.ReadInt64();
+                uint entryCount1 = br.ReadUInt32();
+
+                uint entryCount2 = br.ReadUInt32();
+                ulong Offset = br.ReadUInt64();
+                uint One = br.ReadUInt32();
+
+                if (One == 1 && entryCount1 == entryCount2)
+                {
+                    if (Index == bundleNum)
+                    {
+                        br.BaseStream.Position = (long)Offset+4;
+                        for (int x = 0; x < entryCount1; x++)
+                            ReadEntry(br, x);
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        public void ReadEntry(BinaryReader br, int i)
+        {
+            var be = new BundleEntry(br, HasLengthField);
+
+            //Console.WriteLine("Entry " + be.Id + " Address " + be.Address + " Length " + be.Length);
+
+            this.entries.Add(be);
+            if (HasLengthField || i <= 0)
+                return;
+
+            BundleEntry pbe = this.entries[i - 1];
+            pbe.Length = (int)be.Address - (int)pbe.Address;
+        }
 
         /// <summary>
         /// The load.
@@ -77,114 +220,39 @@ namespace DieselBundle
         public bool Load(string bundleId)
         {
             string headerFile = bundleId + "_h.bundle";
+            bool useAllHeader = false;
             if (!File.Exists(headerFile))
             {
-                Console.WriteLine("Bundle header file does not exist.");
-                return false;
+                if (!bundleId.StartsWith("all_"))
+                {
+                    headerFile = Path.GetDirectoryName(bundleId) + "\\all_h.bundle";
+                    useAllHeader = true;
+                }
+                else
+                {
+                    Console.WriteLine("Bundle header file does not exist");
+                    return false;
+                }
             }
 
             try
             {
-				using (var fs = new FileStream(headerFile, FileMode.Open))
-				{
-					using (var br = new BinaryReader(fs))
-					{
-						
-
-						this.Header = new List<uint>{
-							br.ReadUInt32(), //ref offset
-							br.ReadUInt32(), //tag / count
-							br.ReadUInt32(), //linux:tag / count
- 							br.ReadUInt32(), // offset / count
-						};
-						if (Header[1] != Header[2]) this.Header.Add(br.ReadUInt32());
-
-						uint refOffset = this.Header[0];
-
-						uint itemCount = 0, offset = 0;
-
-						for (int i = 1; i < (Header.Count - 1); i++)
-						{
-							if (Header[i] == Header[i + 1])
-							{
-								itemCount = Header[i];
-                                if (Header.Count <= i + 2)
-                                {
-                                    Header.Add(br.ReadUInt32());
-                                }
-                                offset = Header[i + 2];
-								if (i != 1)
-								{
-									/*if (Header[1] == 0)
-									{
-										offset += 4;
-									}
-									else*/
-										this.HasLengthField = true;
-								}
-
-								break;
-							}
-						}
-
-						if (br.BaseStream.Position < offset)
-						{
-							uint amount = ((offset - (uint)br.BaseStream.Position) / 4);
-							for (uint i = 0; i < amount; i++)
-								this.Header.Add(br.ReadUInt32());
-						}
-
-		                br.BaseStream.Position = offset;
-
-		                this.Header.Add(br.ReadUInt32());
-
-		                for (int i = 0; i < itemCount; ++i)
-		                {
-		                    var be = new BundleEntry { Id = br.ReadUInt32(), Address = br.ReadUInt32() };
-		                    if (this.HasLengthField)
-		                    {
-		                        be.Length = br.ReadInt32();
-		                    }
-
-		                    this.entries.Add(be);
-		                    if (this.HasLengthField || i <= 0)
-		                    {
-		                        continue;
-		                    }
-
-		                    BundleEntry pbe = this.entries[i - 1];
-		                    pbe.Length = (int)be.Address - (int)pbe.Address;
-		                }
-
-		                if (itemCount > 0 && !this.HasLengthField)
-		                {
-		                    this.entries[this.entries.Count - 1].Length = -1;
-		                }
-
-		                //Footer breakdown
-		                /*
-		                 * uint32 - tag
-		                 * uint32 - section size
-		                 * uint32 - count
-		                 * uint32 - unknown
-		                 * uint32 - unknown
-		                 * uint32 - tag?
-		                 * foreach (count):
-		                 *  uint64 - hash (extension)
-		                 *  uint64 - hash (path)
-		                 * uint32 - end?
-		                 * uint32 (0) - end
-		                */
-		                this.Footer = br.ReadBytes((int)(br.BaseStream.Length - br.BaseStream.Position));
-					}
-				}
+                using (var fs = new FileStream(headerFile, FileMode.Open))
+                {
+                    using (var br = new BinaryReader(fs))
+                    {
+                        if (useAllHeader)
+                            return ReadMultiBundleHeader(br, int.Parse(Path.GetFileNameWithoutExtension(bundleId.Replace("all_", ""))));
+                        else
+                            return ReadHeader(br);
+                    }
+                }
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return false;
             }
-
-            return true;
         }
 
         /// <summary>
@@ -196,9 +264,7 @@ namespace DieselBundle
         public void WriteFooter(BinaryWriter writer)
         {
             if (this.Footer != null)
-            {
                 writer.Write(this.Footer);
-            }
         }
 
         /// <summary>
@@ -209,10 +275,12 @@ namespace DieselBundle
         /// </param>
         public void WriteHeader(BinaryWriter writer)
         {
-            foreach (uint headerInt in this.Header)
-            {
-                writer.Write(headerInt);
-            }
+            if (x64)
+                foreach (ulong headerInt in this.Header)
+                    writer.Write(headerInt);
+            else
+                foreach (uint headerInt in this.Header)
+                    writer.Write(headerInt);
         }
 
         /// <summary>

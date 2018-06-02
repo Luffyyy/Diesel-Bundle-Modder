@@ -6,6 +6,7 @@
 
 namespace DieselBundle
 {
+    using System;
     using System.IO;
 
     /// <summary>
@@ -34,23 +35,24 @@ namespace DieselBundle
 
         #region Public Methods and Operators
 
+        public BundleEntry() {}
+        public BundleEntry(BinaryReader br, bool readLength = false) => ReadEntry(br, readLength);
+
         /// <summary>
         /// The read entry.
         /// </summary>
         /// <param name="br">
-        /// The br.
+        /// a basic BinaryReader.
         /// </param>
         /// <param name="readLength">
-        /// The read length.
+        /// does the header contain information about the length?.
         /// </param>
         public void ReadEntry(BinaryReader br, bool readLength = false)
         {
             this.Id = br.ReadUInt32();
             this.Address = br.ReadUInt32();
             if (readLength)
-            {
-                br.ReadInt32();
-            }
+                this.Length = br.ReadInt32();
         }
 
         /// <summary>
@@ -78,9 +80,7 @@ namespace DieselBundle
             writer.Write(this.Id);
             writer.Write(this.Address);
             if (writeLength)
-            {
                 writer.Write(this.Length);
-            }
         }
 
         #endregion
