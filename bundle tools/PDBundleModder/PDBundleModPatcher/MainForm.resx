@@ -123,15 +123,9 @@
   <metadata name="bundleRewriteItemBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>482, 17</value>
   </metadata>
-  <metadata name="bundleRewriteItemBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>482, 17</value>
-  </metadata>
   <data name="label17.Text" xml:space="preserve">
-    <value>This menu generates a crash report based on the last PAYDAY 2 crash. Please select below what information you would like to provide in this report to aid devs/modders in resolving issues in this crash log.</value>
+    <value>This menu generates a crash report based on the last crash of the game. Please select below what information you would like to provide in this report to aid devs/modders in resolving issues in this crash log.</value>
   </data>
-  <metadata name="toolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>211, 17</value>
-  </metadata>
   <metadata name="modContextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>306, 17</value>
   </metadata>

@@ -66,7 +66,7 @@ namespace PDBundleModPatcher
         /// <summary>
         ///     The program title.
         /// </summary>
-        private const string ProgramTitle = "PAYDAY Bundle Modder";
+        private const string ProgramTitle = "Diesel Bundle Modder";
 
         /// <summary>
         ///     The current version full text.
@@ -346,7 +346,7 @@ namespace PDBundleModPatcher
         /// </param>
         private void AboutLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://bitbucket.org/zabb65/payday-2-modding-information/");
+            Process.Start("https://github.com/Luffyyy/Diesel-Bundle-Modder/");
         }
 
         /// <summary>

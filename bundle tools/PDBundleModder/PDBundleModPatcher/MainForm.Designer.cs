@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("PDMod Mods", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Override Folder Mods", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("BLT Mods", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Downloadable Mods", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("PDMod Mods", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Override Folder Mods", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("BLT Mods", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Downloadable Mods", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tabs = new System.Windows.Forms.TabControl();
             this.ApplyTab = new System.Windows.Forms.TabPage();
@@ -333,21 +333,21 @@
             this.availiableMods_listView.CheckBoxes = true;
             this.availiableMods_listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-            listViewGroup5.Header = "PDMod Mods";
-            listViewGroup5.Name = "listViewLocalModsGroup";
-            listViewGroup5.Tag = "LocalModsGroup";
-            listViewGroup6.Header = "Override Folder Mods";
-            listViewGroup6.Name = "listViewOverrideFolderGroup";
-            listViewGroup7.Header = "BLT Mods";
-            listViewGroup7.Name = "listViewBLTModsGroup";
-            listViewGroup8.Header = "Downloadable Mods";
-            listViewGroup8.Name = "listViewDownloadableModsGroup";
-            listViewGroup8.Tag = "DownloadableModsGroup";
+            listViewGroup1.Header = "PDMod Mods";
+            listViewGroup1.Name = "listViewLocalModsGroup";
+            listViewGroup1.Tag = "LocalModsGroup";
+            listViewGroup2.Header = "Override Folder Mods";
+            listViewGroup2.Name = "listViewOverrideFolderGroup";
+            listViewGroup3.Header = "BLT Mods";
+            listViewGroup3.Name = "listViewBLTModsGroup";
+            listViewGroup4.Header = "Downloadable Mods";
+            listViewGroup4.Name = "listViewDownloadableModsGroup";
+            listViewGroup4.Tag = "DownloadableModsGroup";
             this.availiableMods_listView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup5,
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
             this.availiableMods_listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.availiableMods_listView.HideSelection = false;
             this.availiableMods_listView.Location = new System.Drawing.Point(6, 42);
@@ -1267,15 +1267,16 @@
             this.AboutLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AboutLabel.LinkArea = new System.Windows.Forms.LinkArea(102, 32);
+            this.AboutLabel.LinkArea = new System.Windows.Forms.LinkArea(134, 48);
             this.AboutLabel.Location = new System.Drawing.Point(265, 154);
             this.AboutLabel.MinimumSize = new System.Drawing.Size(0, 200);
             this.AboutLabel.Name = "AboutLabel";
             this.AboutLabel.Size = new System.Drawing.Size(511, 262);
             this.AboutLabel.TabIndex = 3;
             this.AboutLabel.TabStop = true;
-            this.AboutLabel.Text = "------\r\nPAYDAY 2 Bundle Modder {0}\r\nBy I am not a spy..., Zwagoth and GREAT BIG B" +
-    "USHY BEARD\r\n------\r\nhttp://www.bitbucket.org/zabb65/\r\n------";
+            this.AboutLabel.Text = "------\r\n\r\nDiesel Bundle Modder {0}\r\nBy I am not a spy..., Zwagoth and GREAT BIG B" +
+    "USHY BEARD\r\nCurrently maintained by Luffy\r\n\r\n------\r\nhttps://github.com/Luffyyy/" +
+    "Diesel-Bundle-Modder/\r\n------";
             this.AboutLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.AboutLabel.UseCompatibleTextRendering = true;
             this.AboutLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutLabelLinkClicked);
@@ -1594,9 +1595,9 @@
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label16.Location = new System.Drawing.Point(469, 6);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(198, 13);
+            this.label16.Size = new System.Drawing.Size(134, 13);
             this.label16.TabIndex = 1;
-            this.label16.Text = "PAYDAY 2 Crash report generator";
+            this.label16.Text = "Crash report generator";
             // 
             // reports_ReportRichTextBox
             // 
@@ -2109,7 +2110,7 @@
             this.MinimumSize = new System.Drawing.Size(810, 531);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "PAYDAY Bundle Modder";
+            this.Text = "Diesel Bundle Modder";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);

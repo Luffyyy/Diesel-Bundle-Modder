@@ -12,3 +12,11 @@ bundle tools/PDBundleModder/PDBundleModPatcher/obj/Debug/
 bundle tools/PDBundleModder/PDBundleModPatcher/obj/Release Win/
 
 bundle tools/PDBundleModder/\.vs/PDBundleModPatcher/v15/Server/sqlite3/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/bin/Release WIN/
+
+bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/bin/Release/
+
+bundle tools/PDBundleModder/PD2SoundBankParser/obj/Release/
+
+*.zip
