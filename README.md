@@ -1,4 +1,4 @@
-# Bundle-Modder
+# Diesel-Bundle-Modder
 
 Updated Bundle Modder for Payday 2, PDTH and Raid WW2.
 
