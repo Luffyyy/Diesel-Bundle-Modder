@@ -1,0 +1,14 @@
+
+bundle tools/PDBundleModder/DieselBundle/obj/Debug/
+
+bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/obj/Release Win/
+
+bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/obj/Debug/
+
+bundle tools/PDBundleModder/DieselBundle/obj/Release Win/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/obj/Debug/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/obj/Release Win/
+
+bundle tools/PDBundleModder/\.vs/PDBundleModPatcher/v15/Server/sqlite3/
