@@ -20,3 +20,17 @@ bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/bin/Release/
 bundle tools/PDBundleModder/PD2SoundBankParser/obj/Release/
 
 *.zip
+
+bundle tools/PDBundleModder/PDBundleModPatcher/bin/Debug/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/bin/Release LINUX/
+
+bundle tools/PDBundleModder/DieselBundle/obj/Release LINUX/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/obj/Release LINUX/
+
+bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/obj/Release LINUX/
+
+bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/bin/Debug/
+
+bundle tools/PDBundleModder/PD2SoundBankParser/obj/Debug/

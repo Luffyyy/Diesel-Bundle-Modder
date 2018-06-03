@@ -35,7 +35,8 @@ namespace PDBundleModPatcher
     using PDBundleModPatcher.ModManagement;
     using Microsoft.WindowsAPICodePack.Taskbar;
     using SoundBankParser;
-
+    using Microsoft.WindowsAPICodePack.Dialogs;
+    
     /// <summary>
     ///     The main form.
     /// </summary>
@@ -742,16 +743,12 @@ namespace PDBundleModPatcher
         /// </param>
         private void AssetFolderButtonClick(object sender, EventArgs e)
         {
-            var folderDialog = new FolderBrowserDialog();
-
-            folderDialog.ShowNewFolderButton = false;
-#if LINUX
-#else
-            folderDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-#endif
-            if (folderDialog.ShowDialog() == DialogResult.OK)
+            //Does this work on linux?
+            var folderDialog = new CommonOpenFileDialog();
+            folderDialog.IsFolderPicker = true;
+            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                StaticStorage.settings.AssetsFolder = folderDialog.SelectedPath;
+                StaticStorage.settings.AssetsFolder = folderDialog.FileName;
                 if (this.TestAssetsFolder())
                 {
                     this.SaveSettings();
@@ -2470,61 +2467,57 @@ namespace PDBundleModPatcher
                 return (ValidAssets = false);
             }
 
-            if (!this.testedAssets)
+            //int all_count = Directory.GetFiles (StaticStorage.settings.AssetsFolder, "all_*_h.bundle").Length;
+            //TestBundleForIDStrings("all_" + (all_count - 1).ToString())
+            bool linux = false;
+            if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe")) || (linux = File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_release"))))) //Payday 2
             {
-                //int all_count = Directory.GetFiles (StaticStorage.settings.AssetsFolder, "all_*_h.bundle").Length;
-                //TestBundleForIDStrings("all_" + (all_count - 1).ToString())
-                bool linux = false;
-                if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe")) || (linux = File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_release"))))) //Payday 2
-                {
-                    StaticStorage.settings.Game = "PAYDAY 2" + (linux ? " [Linux]" : "");
-                    StaticStorage.settings.GameShortName = "PAYDAY 2" + (linux ? " [Linux]" : "");
-                    if (linux)
-                        StaticStorage.settings.GameProcess = "payday2_release";
-                    else
-                        StaticStorage.settings.GameProcess = "payday2_win32_release";
-
-                    StaticStorage.settings.GameSteamID = 218620;
-                    StaticStorage.settings.GameSupportsOverride = !linux;
-                }
-                else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "raid_win64_d3d9_release.exe"))) //Payday 2 Demo
-                {
-                    StaticStorage.settings.Game = "RAID: World War II";
-                    StaticStorage.settings.GameShortName = "Raid WW2";
-                    StaticStorage.settings.GameProcess = "raid_win64_d3d9_release";
-                    StaticStorage.settings.GameSteamID = 414740;
-                    StaticStorage.settings.GameSupportsOverride = true;
-                }
-                else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "all.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe"))) //Payday 2 Demo
-                {
-                    StaticStorage.settings.Game = "PAYDAY 2 Demo";
-                    StaticStorage.settings.GameShortName = "PAYDAY 2";
-                    StaticStorage.settings.GameProcess = "payday2_win32_release";
-                    StaticStorage.settings.GameSteamID = 251040;
-                    StaticStorage.settings.GameSupportsOverride = false;
-                }
-                else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "all.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday_win32_release.exe"))) //Payday: The Heist
-                {
-                    StaticStorage.settings.Game = "PAYDAY: The Heist";
-                    StaticStorage.settings.GameShortName = "PAYDAY";
-                    StaticStorage.settings.GameProcess = "payday_win32_release";
-                    StaticStorage.settings.GameSteamID = 24240;
-                    StaticStorage.settings.GameSupportsOverride = false;
-                }
+                StaticStorage.settings.Game = "PAYDAY 2" + (linux ? " [Linux]" : "");
+                StaticStorage.settings.GameShortName = "PAYDAY 2" + (linux ? " [Linux]" : "");
+                if (linux)
+                    StaticStorage.settings.GameProcess = "payday2_release";
                 else
-                {
-                    MessageBox.Show(
-                        "The folder you selected does not appear to be a valid assets folder. Please select a valid assets folder.",
-                        "Invalid assets folder.");
-                    this.tabs.SelectedIndex = 2;
-                    return (ValidAssets = false);
-                }
+                    StaticStorage.settings.GameProcess = "payday2_win32_release";
 
-
-                updateTitle();
-                this.AssetFolderEdit.Text = StaticStorage.settings.AssetsFolder;
+                StaticStorage.settings.GameSteamID = 218620;
+                StaticStorage.settings.GameSupportsOverride = !linux;
             }
-            this.testedAssets = true;
+            else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "raid_win64_d3d9_release.exe"))) //Payday 2 Demo
+            {
+                StaticStorage.settings.Game = "RAID: World War II";
+                StaticStorage.settings.GameShortName = "Raid WW2";
+                StaticStorage.settings.GameProcess = "raid_win64_d3d9_release";
+                StaticStorage.settings.GameSteamID = 414740;
+                StaticStorage.settings.GameSupportsOverride = true;
+            }
+            else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "all.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe"))) //Payday 2 Demo
+            {
+                StaticStorage.settings.Game = "PAYDAY 2 Demo";
+                StaticStorage.settings.GameShortName = "PAYDAY 2";
+                StaticStorage.settings.GameProcess = "payday2_win32_release";
+                StaticStorage.settings.GameSteamID = 251040;
+                StaticStorage.settings.GameSupportsOverride = false;
+            }
+            else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "all.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday_win32_release.exe"))) //Payday: The Heist
+            {
+                StaticStorage.settings.Game = "PAYDAY: The Heist";
+                StaticStorage.settings.GameShortName = "PAYDAY";
+                StaticStorage.settings.GameProcess = "payday_win32_release";
+                StaticStorage.settings.GameSteamID = 24240;
+                StaticStorage.settings.GameSupportsOverride = false;
+            }
+            else
+            {
+                MessageBox.Show(
+                    "The folder you selected does not appear to be a valid assets folder. Please select a valid assets folder.",
+                    "Invalid assets folder.");
+                this.tabs.SelectedIndex = 2;
+                return (ValidAssets = false);
+            }
+
+
+            updateTitle();
+            this.AssetFolderEdit.Text = StaticStorage.settings.AssetsFolder;
 
             if (StaticStorage.settings.GameSupportsOverride)
             {
@@ -4261,14 +4254,11 @@ namespace PDBundleModPatcher
 
         private void CustomExtractClick(object sender, EventArgs e)
         {
-            var folderDialog = new FolderBrowserDialog();
-            //folderDialog.ShowNewFolderButton = false;
-            #if !LINUX
-            folderDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-            #endif
-            if (folderDialog.ShowDialog() == DialogResult.OK)
+            var folderDialog = new CommonOpenFileDialog();
+            folderDialog.IsFolderPicker = true;
+            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                StaticStorage.settings.CustomExtractPath = folderDialog.SelectedPath;
+                StaticStorage.settings.CustomExtractPath = folderDialog.FileName;
                 this.SaveSettings();
                 this.txtExtractFolder.Text = StaticStorage.settings.CustomExtractPath;
             }
