@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DieselEngineFormats.Bundle;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -34,8 +35,8 @@ namespace PDBundleModPatcher
                     continue;
 
                 String filepath = "";
-                String path = StaticStorage.Known_Index.GetAny(key.EntryPath);
-                String extension = StaticStorage.Known_Index.GetExtension(key.EntryExtension);
+                String path = HashIndex.GetUnhashed(key.EntryPath);
+                String extension = HashIndex.GetUnhashed(key.EntryExtension);
 
                 if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(extension))
                 {

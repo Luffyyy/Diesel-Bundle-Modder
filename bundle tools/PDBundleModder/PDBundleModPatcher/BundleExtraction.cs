@@ -1,4 +1,4 @@
-﻿using DieselBundle;
+﻿using DieselEngineFormats.Bundle;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +13,7 @@ namespace PDBundleModPatcher
     {
         public string Title { get; set; }
 
-        public Func<BundleExtraction, BundleEntry, string> StringFunc { get; set; }
+        public Func<BundleExtraction, PackageFileEntry, string> StringFunc { get; set; }
 
         public override string ToString()
         {
@@ -23,7 +23,7 @@ namespace PDBundleModPatcher
 
     public class ListBundleOption : ListEntryOption
     {
-        public new Func<BundleExtraction, BundleHeader, string, string> StringFunc { get; set; }
+        public new Func<BundleExtraction, PackageHeader, string, string> StringFunc { get; set; }
     }
 
     public struct ListOptions
@@ -103,7 +103,7 @@ namespace PDBundleModPatcher
             if (single_bundle != null)
                 files = new List<string> { Path.Combine(StaticStorage.settings.AssetsFolder, single_bundle) };
             else
-                files = Directory.EnumerateFiles(StaticStorage.settings.AssetsFolder, "*_h.bundle").ToList();
+                files = Directory.EnumerateFiles(StaticStorage.settings.AssetsFolder, "*.bundle").ToList();
 
             total_bundle = (uint)files.Count();
 
@@ -112,13 +112,16 @@ namespace PDBundleModPatcher
                 if (this.terminate)
                     break;
 
-                BundleHeader bundle;
-                string bundle_path = file.Replace("_h.bundle", "");
+                if (file.EndsWith("_h.bundle"))
+                    continue;
+
+                PackageHeader bundle;
+                string bundle_path = file.Replace(".bundle", "");
                 string bundle_id = Path.GetFileName(bundle_path);
 
-                bundle = new BundleHeader();
+                bundle = new PackageHeader();
                 TextWriteLine("Loading bundle header " + bundle_id);
-                if (!bundle.Load(bundle_path))
+                if (!bundle.Load(file))
                 {
                     TextWriteLine("Failed to parse bundle header.");
                     continue;
@@ -157,44 +160,44 @@ namespace PDBundleModPatcher
             log.Enqueue(StaticStorage.log.WriteLine(string.Format(line, extras), true));
         }
 
-        public string GetFileName(BundleEntry be)
+        public string GetFileName(PackageFileEntry be)
         {
             string path;
-            if (!cached_paths.ContainsKey(be.Id))
+            if (!cached_paths.ContainsKey(be.ID))
             {
-                path = String.Format("unknown_{0:x}.bin", be.Id);
-                NameEntry ne = StaticStorage.Index.Id2Name(be.Id);
+                path = String.Format("unknown_{0:x}.bin", be.ID);
+                DatabaseEntry ne = StaticStorage.Index.EntryFromID(be.ID);
                 if (ne != null)
                 {
-                    path = StaticStorage.Known_Index.GetPath(ne.Path) ?? String.Format("{0:x}", ne.Path);
+                    path = ne.Path.UnHashed ?? String.Format("{0:x}", ne.Path);
 
                     if (ne.Language != 0)
                     {
-                        if (StaticStorage.Index.Id2Lang(ne.Language) != null)
+                        if (StaticStorage.Index.LanguageFromID(ne.Language) != null)
                         {
-                            string lang_ext = StaticStorage.Known_Index.GetAny(StaticStorage.Index.Id2Lang(ne.Language).Hash);
+                            string lang_ext = StaticStorage.Index.LanguageFromID(ne.Language).Name.UnHashed;
                             path += String.Format(".{0}", (lang_ext != null ? lang_ext : ne.Language.ToString("x")));
                         }
                         else
                             path += String.Format(".{0:x}", ne.Language);
                     }
 
-                    string extension = StaticStorage.Known_Index.GetExtension(ne.Extension) ?? String.Format("{0:x}", ne.Extension);
+                    string extension = ne.Extension.UnHashed ?? String.Format("{0:x}", ne.Extension);
 
                     if (!list && StaticStorage.settings.ExtensionConversion.ContainsKey(extension))
                         extension = StaticStorage.settings.ExtensionConversion[extension];
 
                     path += "." + extension;
                 }
-                cached_paths[be.Id] = path;
+                cached_paths[be.ID] = path;
             }
             else
-                path = cached_paths[be.Id];
+                path = cached_paths[be.ID];
 
             return path;
         }
 
-        public void ListBundle(BundleHeader bundle, string bundle_id)
+        public void ListBundle(PackageHeader bundle, string bundle_id)
         {
             this.ListOutput.WriteBundle(bundle, bundle_id);
 
@@ -202,7 +205,7 @@ namespace PDBundleModPatcher
             {
                 for (; current_bundle_progress < current_bundle_total_progress; current_bundle_progress++)
                 {
-                    BundleEntry be = bundle.Entries[(int)current_bundle_progress];
+                    PackageFileEntry be = bundle.Entries[(int)current_bundle_progress];
                     if (this.terminate)
                         break;
 
@@ -213,7 +216,7 @@ namespace PDBundleModPatcher
                 current_bundle_progress++;
         }
 
-        public void ExtractBundle(BundleHeader bundle, string bundle_id)
+        public void ExtractBundle(PackageHeader bundle, string bundle_id)
         {
             string bundle_file = Path.Combine(StaticStorage.settings.AssetsFolder, bundle_id + ".bundle");
             if (!File.Exists(bundle_file))
@@ -229,7 +232,7 @@ namespace PDBundleModPatcher
                 {
                     for (; current_bundle_progress < current_bundle_total_progress; current_bundle_progress++)
                     {
-                        BundleEntry be = bundle.Entries[(int)current_bundle_progress];
+                        PackageFileEntry be = bundle.Entries[(int)current_bundle_progress];
                         if (this.terminate)
                             break;
 
@@ -294,7 +297,7 @@ namespace PDBundleModPatcher
             this.Output.AppendLine();
         }
 
-        public virtual void WriteEntry(BundleEntry entry)
+        public virtual void WriteEntry(PackageFileEntry entry)
         {
             if (ListOptions.EntryInfo.Count == 0)
                 return;
@@ -308,7 +311,7 @@ namespace PDBundleModPatcher
             this.Output.AppendLine();
         }
 
-        public virtual void WriteBundle(BundleHeader header, string bundle_id)
+        public virtual void WriteBundle(PackageHeader header, string bundle_id)
         {
             if (ListOptions.BundleInfo.Count == 0)
                 return;
@@ -352,7 +355,7 @@ namespace PDBundleModPatcher
             this.Output.AppendLine();
         }
 
-        public override void WriteBundle(BundleHeader header, string bundle_id)
+        public override void WriteBundle(PackageHeader header, string bundle_id)
         {
             if (ListOptions.BundleInfo.Count == 0)
                 return;
@@ -366,7 +369,7 @@ namespace PDBundleModPatcher
             this.WriteEmptyBundleColumns = false;
         }
 
-        public override void WriteEntry(BundleEntry entry)
+        public override void WriteEntry(PackageFileEntry entry)
         {
             if (ListOptions.EntryInfo.Count == 0)
                 return;

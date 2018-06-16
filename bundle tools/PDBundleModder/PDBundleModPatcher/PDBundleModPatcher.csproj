@@ -12,7 +12,7 @@
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -110,6 +110,9 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DieselEngineFormats">
+      <HintPath>..\packages\DieselEngineFormats.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
@@ -271,10 +274,6 @@
     <ProjectReference Include="..\..\PDBundleModder_Updater\PDBundleModder_Updater\PDBundleModPatcher_Updater.csproj">
       <Project>{FDAFE5BD-7382-45A9-9506-54E4E41A9D63}</Project>
       <Name>PDBundleModPatcher_Updater</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DieselBundle\DieselBundle.csproj">
-      <Project>{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}</Project>
-      <Name>DieselBundle</Name>
     </ProjectReference>
     <ProjectReference Include="..\PD2SoundBankParser\SoundBankParser.csproj">
       <Project>{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}</Project>

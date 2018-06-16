@@ -1,4 +1,5 @@
-﻿using DieselBundle;
+﻿using DieselEngineFormats.Bundle;
+using DieselEngineFormats.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace PDBundleModPatcher.Diesel
 {
     class DieselPackage
     {
-        List<BundleEntry> entries = new List<BundleEntry>();
+        List<PackageFileEntry> entries = new List<PackageFileEntry>();
 
 
         public DieselPackage()
@@ -16,17 +17,14 @@ namespace PDBundleModPatcher.Diesel
 
         }
 
-        public DieselPackage(List<BundleEntry> entries)
+        public DieselPackage(List<PackageFileEntry> entries)
         {
             this.entries = entries;
         }
 
         public void writePackage(String name)
         {
-            UInt64 hashed_name = DieselBundle.Utils.Hash64.HashString(name);
-
-
-
+            UInt64 hashed_name = Hash64.HashString(name);
         }
     }
 }

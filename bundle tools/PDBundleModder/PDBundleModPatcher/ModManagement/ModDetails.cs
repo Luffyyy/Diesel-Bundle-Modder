@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DieselEngineFormats.Bundle;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -42,8 +43,8 @@ namespace PDBundleModPatcher
                 newBri.ReplacementFile = Path.GetFileName(this._mod.file)+"/"+item.ReplacementFile;
 
                 String sourcefile = "";
-                String path = StaticStorage.Known_Index.GetAny(item.BundlePath);
-                String extension = StaticStorage.Known_Index.GetExtension(item.BundleExtension);
+                String path = HashIndex.GetUnhashed(item.BundlePath);
+                String extension = HashIndex.GetUnhashed(item.BundleExtension);
 
                 if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(extension))
                 {

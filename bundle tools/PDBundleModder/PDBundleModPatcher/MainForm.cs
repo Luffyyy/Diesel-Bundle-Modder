@@ -21,9 +21,6 @@ namespace PDBundleModPatcher
     using System.Windows.Forms;
     using System.Xml.Serialization;
 
-    using DieselBundle;
-    using DieselBundle.Utils;
-
     using Ionic.Zip;
 
     using Timer = System.Windows.Forms.Timer;
@@ -36,7 +33,9 @@ namespace PDBundleModPatcher
     using Microsoft.WindowsAPICodePack.Taskbar;
     using SoundBankParser;
     using Microsoft.WindowsAPICodePack.Dialogs;
-    
+    using DieselEngineFormats.Bundle;
+    using DieselEngineFormats.Utils;
+
     /// <summary>
     ///     The main form.
     /// </summary>
@@ -425,7 +424,7 @@ namespace PDBundleModPatcher
                 return;
             }
 
-            HashSet<uint> bundleIds = StaticStorage.Index.Entry2Id(
+            HashSet<uint> bundleIds = StaticStorage.Index.IDFromEntry(
                 path,
                 extension,
                 language,
@@ -553,11 +552,11 @@ namespace PDBundleModPatcher
                                 )
                                 {
 
-                                    if (!string.IsNullOrEmpty(StaticStorage.Known_Index.GetPath(bri.BundlePath)) && !string.IsNullOrEmpty(StaticStorage.Known_Index.GetExtension(bri.BundleExtension)))
+                                    if (!string.IsNullOrEmpty(HashIndex.GetUnhashed(bri.BundlePath)) && !string.IsNullOrEmpty(HashIndex.GetUnhashed(bri.BundleExtension)))
                                     {
                                         string extrname = "";
-                                        extrname += StaticStorage.Known_Index.GetPath(bri.BundlePath);
-                                        extrname += "." + StaticStorage.Known_Index.GetExtension(bri.BundleExtension);
+                                        extrname += HashIndex.Get(bri.BundlePath).UnHashed;
+                                        extrname += "." + HashIndex.Get(bri.BundleExtension).UnHashed;
 
 
                                         string modName = bri.ModName;
@@ -849,7 +848,7 @@ namespace PDBundleModPatcher
 
                 if (pieces.Length == 3)
                 {
-                    if ((language = StaticStorage.Index.Lang2Id(Hash64.HashString(pieces[1]))) == 0)
+                    if ((language = StaticStorage.Index.IDFromLanguageHash(Hash64.HashString(pieces[1]))) == 0)
                     {
                         uint.TryParse(pieces[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out language);
                     }
@@ -1036,7 +1035,7 @@ namespace PDBundleModPatcher
             extension = Hash64.HashString(pieces[pieces.Length - 1]);
             if (pieces.Length == 3)
             {
-                if ((language = StaticStorage.Index.Lang2Id(Hash64.HashString(pieces[1]))) == 0)
+                if ((language = StaticStorage.Index.IDFromLanguageHash(Hash64.HashString(pieces[1]))) == 0)
                 {
                     uint.TryParse(pieces[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out language);
                 }
@@ -1054,7 +1053,7 @@ namespace PDBundleModPatcher
                 this.Error(
                     "Filename did not appear to be valid. It must be either path/to/file.ext or path/to/file.language.ext in format.", currentLineNumber);
             }
-            if (StaticStorage.Index.Entry2Id(path, extension, 0).Count == 0)
+            if (StaticStorage.Index.IDFromEntry(path, extension, 0).Count == 0)
                 this.Error("Could not find the file in the file index. Please check the spelling and that you used / and not \\.", currentLineNumber);
         }
 
@@ -1340,7 +1339,7 @@ namespace PDBundleModPatcher
             this.clstSelectInformation.Items.AddRange(new object[] {
                 new ListBundleOption { Title = "Package", StringFunc = (extract, bundle, bundle_id) => { return bundle_id; }},
                 new ListBundleOption { Title = "Package (UnHashed)", StringFunc = (extract, bundle, bundle_id) => { return this.UnHashString(bundle_id, true); } },
-                new ListEntryOption { Title = "ID", StringFunc = (extract, entry) => { return entry.Id.ToString(); } },
+                new ListEntryOption { Title = "ID", StringFunc = (extract, entry) => { return entry.ID.ToString(); } },
                 new ListEntryOption { Title = "Length", StringFunc = (extract, entry) => { return entry.Length.ToString(); } },
                 new ListEntryOption { Title = "Path", StringFunc = (extract, entry) => { return extract.GetFileName(entry); } },
             });
@@ -1380,24 +1379,24 @@ namespace PDBundleModPatcher
 
                 var watch = Stopwatch.StartNew();
 
-                StaticStorage.Known_Index.Load(HashlistFile);
+                HashIndex.Load(HashlistFile);
                 this.HashlistLoaded = true;
                 watch.Stop();
                 StaticStorage.log.WriteLine("Known_Index.Load - " + watch.ElapsedMilliseconds + " ms");
             }
 
             SortedSet<String> paths = new SortedSet<String>();
-            List<NameEntry> nameentrylist = StaticStorage.Index.getid2NameEntries();
+            List<DatabaseEntry> nameentrylist = StaticStorage.Index.GetDatabaseEntries();
 
-            foreach (NameEntry ne in nameentrylist)
+            foreach (DatabaseEntry ne in nameentrylist)
             {
-                string path = StaticStorage.Known_Index.GetPath(ne.Path);
-                string extension = StaticStorage.Known_Index.GetExtension(ne.Extension);
+                string path = ne.Path.UnHashed;
+                string extension = ne.Extension.UnHashed;
                 string language = null;
 
-                if (StaticStorage.Index.Id2Lang(ne.Language) != null)
+                if (StaticStorage.Index.LanguageFromID(ne.Language) != null)
                 {
-                    language = StaticStorage.Known_Index.GetAny(StaticStorage.Index.Id2Lang(ne.Language).Hash);
+                    language = StaticStorage.Index.LanguageFromID(ne.Language).Name.UnHashed;
 
                     if (String.IsNullOrWhiteSpace(language))
                         language = ne.Language.ToString("X");
@@ -1431,14 +1430,15 @@ namespace PDBundleModPatcher
                 if (!File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, bundle_id + ".bundle")) || !File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, bundle_id + "_h.bundle")))
                     continue;
 
-                BundleHeader bundle = new BundleHeader();
-                if (!bundle.Load(bundle_id_path))
+                string bundle_file = bundle_id_path + ".bundle";
+
+                PackageHeader bundle = new PackageHeader();
+                if (!bundle.Load(bundle_file))
                 {
                     StaticStorage.log.WriteLine(string.Format("[Update error] Failed to parse bundle header. ({0})", bundle_id));
                     return false;
                 }
 
-                string bundle_file = bundle_id_path + ".bundle";
                 if (!File.Exists(bundle_file))
                 {
                     StaticStorage.log.WriteLine(string.Format("[Update error] Bundle file does not exist. ({0})", bundle_file));
@@ -1449,13 +1449,13 @@ namespace PDBundleModPatcher
                     using (BinaryReader br = new BinaryReader(fs))
                     {
                         byte[] data;
-                        foreach (BundleEntry be in bundle.Entries)
+                        foreach (PackageFileEntry be in bundle.Entries)
                         {
-                            NameEntry ne = StaticStorage.Index.Id2Name(be.Id);
+                            DatabaseEntry ne = StaticStorage.Index.EntryFromID(be.ID);
                             if (ne == null)
                                 continue;
 
-                            if (ne.Path == 0x9234DD22C60D71B8 && ne.Extension == 0x9234DD22C60D71B8)
+                            if (ne.Path.Hashed == 0x9234DD22C60D71B8 && ne.Extension.Hashed == 0x9234DD22C60D71B8)
                             {
                                 fs.Position = be.Address;
                                 if (be.Length == -1)
@@ -1470,23 +1470,16 @@ namespace PDBundleModPatcher
                                 sb.Clear();
 
                                 foreach (string idstring in idstring_data)
-                                {
-                                    if (idstring.Contains("/"))
-                                        new_paths.Add(idstring);
-                                    else if (!idstring.Contains("/") && !idstring.Contains(".") && !idstring.Contains(":") && !idstring.Contains("\\"))
-                                        new_exts.Add(idstring);
-                                    else
-                                        new_other.Add(idstring);
-                                }
+                                    new_paths.Add(idstring);
 
                                 new_paths.Add("idstring_lookup");
                                 new_paths.Add("existing_banks");
 
-                                //StaticStorage.Known_Index.Clear();
-                                StaticStorage.Known_Index.Load(ref new_paths, ref new_exts, ref new_other);
+                                //HashIndex.Clear();
+                                HashIndex.Load(ref new_paths);
                                 this.HashlistLoaded = true;
 
-                                StaticStorage.Known_Index.GenerateHashList(HashlistFile);
+                                HashIndex.GenerateHashList(HashlistFile);
 
                                 new_paths.Clear();
                                 new_exts.Clear();
@@ -1531,7 +1524,7 @@ namespace PDBundleModPatcher
 
             packagesList.AddRange(sortedpackages.ToArray());
 
-            //StaticStorage.Known_Index.Load(HashlistFile);
+            //HashIndex.Load(HashlistFile);
             watch.Stop();
             StaticStorage.log.WriteLine("LoadPackageNames.EnumerateFiles - " + watch.ElapsedMilliseconds + " ms");
         }
@@ -2052,10 +2045,10 @@ namespace PDBundleModPatcher
                         foreach (var item in return_item.ItemQueue)
                         {
                             string file_name = "";
-                            file_name += StaticStorage.Known_Index.GetPath(item.BundlePath);
+                            file_name += HashIndex.GetUnhashed(item.BundlePath);
                             if (item.IsLanguageSpecific)
                                 file_name += "." + item.BundleLanguage;
-                            file_name += "." + StaticStorage.Known_Index.GetExtension(item.BundleExtension);
+                            file_name += "." + HashIndex.GetUnhashed(item.BundleExtension);
 
 
                             if (return_list.ContainsKey(file_name))
@@ -2930,9 +2923,9 @@ namespace PDBundleModPatcher
                 else
                 {
                     hash = Convert.ToUInt64(this.hashHashBox.Text);
-                    if (StaticStorage.Known_Index.GetAny(hash) != null)
+                    if (HashIndex.GetUnhashed(hash) != null)
                     {
-                        unhashed = StaticStorage.Known_Index.GetAny(hash);
+                        unhashed = HashIndex.GetUnhashed(hash);
                     }
                     else
                         MessageBox.Show("Entered hash is not part of this game.", "Could not reverse the hash");
@@ -2973,7 +2966,7 @@ namespace PDBundleModPatcher
                     | (0xFF00000000000000) & (hash << 56));
             }
 
-            return StaticStorage.Known_Index.GetAny(hash) ?? "";
+            return HashIndex.GetUnhashed(hash) ?? "";
         }
 
         private void BundleFileName_KeyPress(object sender, KeyEventArgs e)
@@ -4167,9 +4160,8 @@ namespace PDBundleModPatcher
 
         #region Bundle Extraction
 
-        static private NameIndex NameIndex = StaticStorage.Index;
-        static private KnownIndex KnownIndex = StaticStorage.Known_Index;
-        static private BundleHeader bundle = new BundleHeader();
+        static private PackageDatabase NameIndex = StaticStorage.Index;
+        static private PackageHeader bundle = new PackageHeader();
         int logtracker = 0;
         string StartLabel = "Start";
         string StopLabel = "Stop";
@@ -4417,12 +4409,8 @@ namespace PDBundleModPatcher
         /// <summary>
         ///     The index.
         /// </summary>
-        public static NameIndex Index = new NameIndex();
+        public static PackageDatabase Index = new PackageDatabase();
 
-        /// <summary>
-        ///     The known index.
-        /// </summary>
-        public static KnownIndex Known_Index = new KnownIndex();
 
         /// <summary>
         ///     The known index.

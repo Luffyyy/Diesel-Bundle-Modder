@@ -1,4 +1,5 @@
-﻿using DieselBundle.Utils;
+﻿using DieselEngineFormats.Bundle;
+using DieselEngineFormats.Utils;
 using Ionic.Zip;
 using Newtonsoft.Json;
 using System;
@@ -279,8 +280,8 @@ namespace PDBundleModPatcher.ModManagement
                             )
                         {
 
-                            if (string.IsNullOrEmpty(StaticStorage.Known_Index.GetPath(mo_bri.BundlePath)) ||
-                                string.IsNullOrEmpty(StaticStorage.Known_Index.GetExtension(mo_bri.BundleExtension))
+                            if (string.IsNullOrEmpty(HashIndex.GetUnhashed(mo_bri.BundlePath)) ||
+                                string.IsNullOrEmpty(HashIndex.GetUnhashed(mo_bri.BundleExtension))
                                 )
                             {
                                 continue;

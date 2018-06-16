@@ -15,12 +15,12 @@ namespace PDBundleModPatcher
     using System.Linq;
     using System.Threading;
 
-    using DieselBundle;
-
     using Ionic.Zip;
 
     using Newtonsoft.Json;
     using System.Windows.Forms;
+    using DieselEngineFormats.Bundle;
+    using DieselEngineFormats.Utils;
 
 
     /// <summary>
@@ -816,13 +816,13 @@ namespace PDBundleModPatcher
                             )
                         {
 
-                            if (!string.IsNullOrEmpty(StaticStorage.Known_Index.GetPath(bri.BundlePath)) &&
-                                !string.IsNullOrEmpty(StaticStorage.Known_Index.GetExtension(bri.BundleExtension))
+                            if (!string.IsNullOrEmpty(HashIndex.GetUnhashed(bri.BundlePath)) &&
+                                !string.IsNullOrEmpty(HashIndex.GetUnhashed(bri.BundleExtension))
                                 )
                             {
                                 string extrname = "";
-                                extrname += StaticStorage.Known_Index.GetPath(bri.BundlePath);
-                                extrname += "." + StaticStorage.Known_Index.GetExtension(bri.BundleExtension);
+                                extrname += HashIndex.GetUnhashed(bri.BundlePath);
+                                extrname += "." + HashIndex.GetUnhashed(bri.BundleExtension);
 
                                 string modName = bri.getEscapedName();
 
@@ -1238,23 +1238,21 @@ namespace PDBundleModPatcher
             string backupFolder = Path.Combine(this._assetFolder, "asset_backups");
             Directory.CreateDirectory(backupFolder);
 
-            var header = new BundleHeader();
-            if (!header.Load(bundlePath))
-            {
+            var header = new PackageHeader();
+            if (!header.Load(bundlePath + ".bundle"))
                 this.Error = "Failed to parse bundle header: " + bundlePath;
-            }
-
+          
             var bundleFS = new FileStream(bundlePath + ".bundle", FileMode.Open, FileAccess.Read);
             var bundleBR = new BinaryReader(bundleFS);
 
-            foreach (BundleEntry entry in header.Entries)
+            foreach (PackageFileEntry entry in header.Entries)
             {
                 BundleRewriteItem rewriteEntryItem;
                 BundleRewriteItem backupRewriteItem = new BundleRewriteItem();
-                if (mod.ItemQueue.Any(rewriteItem => rewriteItem.Ids.Contains(entry.Id)))
+                if (mod.ItemQueue.Any(rewriteItem => rewriteItem.Ids.Contains(entry.ID)))
                 {
-                    NameEntry ne = StaticStorage.Index.Id2Name(entry.Id);
-                    rewriteEntryItem = mod.ItemQueue.First(rewriteItem => rewriteItem.Ids.Contains(entry.Id));
+                    DatabaseEntry ne = StaticStorage.Index.EntryFromID(entry.ID);
+                    rewriteEntryItem = mod.ItemQueue.First(rewriteItem => rewriteItem.Ids.Contains(entry.ID));
 
 					if (!File.Exists(Path.Combine(backupFolder, ne.ToString())))
                     {
@@ -1291,27 +1289,30 @@ namespace PDBundleModPatcher
             success = false;
             var bundles = new HashSet<string>();
             this.SetTotalProgress("Determining Bundles To Modify", -1);
-            List<string> files = Directory.EnumerateFiles(this._assetFolder, "*_h.bundle").ToList();
-
+            List<string> files = Directory.EnumerateFiles(this._assetFolder, "*.bundle").ToList();
+        
             for (int i = 0; i < files.Count; i++ )
             {
                 string file = files[i];
+                if (file.EndsWith("_h.bundle"))
+                    continue;
+
                 this.SetBundleProgress(
                         string.Format("Reviewing Bundle {0}/{1}", i, files.Count),
                         (int)((i / (float)files.Count) * 100.0f));
 
-                string bundlePath = file.Replace("_h.bundle", string.Empty);
-                var header = new BundleHeader();
-                if (!header.Load(bundlePath))
+                string bundlePath = file.Replace(".bundle", string.Empty);
+                var header = new PackageHeader();
+                if (!header.Load(file))
                 {
                     this.Error = "Failed to parse bundle header: " + bundlePath;
                     return bundles;
                 }
 
-                foreach (BundleEntry entry in header.Entries)
+                foreach (PackageFileEntry entry in header.Entries)
                 {
                     bool found = false;
-                    if (this._mod.ItemQueue.Any(rewriteItem => rewriteItem.Ids.Contains(entry.Id)))
+                    if (this._mod.ItemQueue.Any(rewriteItem => rewriteItem.Ids.Contains(entry.ID)))
                     {
                         bundles.Add(Path.GetFileNameWithoutExtension(bundlePath));
                         this.TotalEntryCount += header.Entries.Count;
@@ -1354,18 +1355,18 @@ namespace PDBundleModPatcher
 
                 List<uint> enties = new List<uint>();
                 string bundlePath = file.Replace("_h.bundle", string.Empty);
-                var header = new BundleHeader();
-                if (!header.Load(bundlePath))
+                var header = new PackageHeader();
+                if (!header.Load(file))
                 {
                     this.Error = "Failed to parse bundle header: " + bundlePath;
                     return bundles;
                 }
 
-                foreach (BundleEntry entry in header.Entries)
+                foreach (PackageFileEntry entry in header.Entries)
                 {
-                    if (ids.Contains(entry.Id))
+                    if (ids.Contains(entry.ID))
                     {
-                        enties.Add(entry.Id);
+                        enties.Add(entry.ID);
                     }
                 }
 
@@ -1396,7 +1397,7 @@ namespace PDBundleModPatcher
                             string.Format("Reviewing Bundle {0}/{1}", i, this._mod.ItemQueue.Count),
                             (int)((i / (float)this._mod.ItemQueue.Count) * 100.0f));
 
-                    item.Ids = StaticStorage.Index.Entry2Id(
+                    item.Ids = StaticStorage.Index.IDFromEntry(
                         item.BundlePath,
                         item.BundleExtension,
                         item.BundleLanguage,
@@ -1428,13 +1429,13 @@ namespace PDBundleModPatcher
 
 
             bool isAll = bundleId.Contains("all_");
-            var inHeader = new BundleHeader();
-            if (!inHeader.Load(Path.Combine(this._assetFolder, bundleId)))
+            var inHeader = new PackageHeader();
+            if (!inHeader.Load(Path.Combine(this._assetFolder, bundleId + ".bundle")))
             {
                 return false;
             }
 
-            var outHeader = new BundleHeader();
+            var outHeader = new PackageHeader();
             outHeader.Footer = inHeader.Footer;
             outHeader.Header = inHeader.Header;
             outHeader.HasLengthField = inHeader.HasLengthField;
@@ -1459,7 +1460,7 @@ namespace PDBundleModPatcher
             if (isAll)
                 inHeader.SortEntriesAddress();
 
-            foreach (BundleEntry entry in inHeader.Entries)
+            foreach (PackageFileEntry entry in inHeader.Entries)
             {
                 st_total.Restart();
                 st_entry.Restart();
@@ -1471,8 +1472,8 @@ namespace PDBundleModPatcher
                         (int)((currentEntry / (float)entryCount) * 100.0f));
                 }
 
-                var newEntry = new BundleEntry();
-                newEntry.Id = entry.Id;
+                var newEntry = new PackageFileEntry();
+                newEntry.ID = entry.ID;
                 newEntry.Length = entry.Length;
                 newEntry.Address = (uint)currentAddress;
                 bool replaced = false;
@@ -1480,9 +1481,9 @@ namespace PDBundleModPatcher
                 bool restore = false;
 
 
-                if (this._rewriteItems.ContainsKey(entry.Id))
+                if (this._rewriteItems.ContainsKey(entry.ID))
                 {
-                    if (this._rewriteItems[entry.Id].toRestore)
+                    if (this._rewriteItems[entry.ID].toRestore)
                         restore = true;
 
                     MemoryStream newData = new MemoryStream();
@@ -1492,13 +1493,13 @@ namespace PDBundleModPatcher
                         if (this._backupType == 0)
                         {
                             var inRestoreBundle = new FileStream(Path.Combine(this._assetFolder, "asset_backups", bundleId + ".bundle"), FileMode.Open, FileAccess.Read);
-                            var inRestoreHeader = new BundleHeader();
-                            if (!inRestoreHeader.Load(Path.Combine(this._assetFolder, "asset_backups", bundleId)))
+                            var inRestoreHeader = new PackageHeader();
+                            if (!inRestoreHeader.Load(Path.Combine(this._assetFolder, "asset_backups", bundleId + ".bundle")))
                                 return false;
 
-                            foreach (BundleEntry restoreEntry in inRestoreHeader.Entries)
+                            foreach (PackageFileEntry restoreEntry in inRestoreHeader.Entries)
                             {
-                                if (restoreEntry.Id == entry.Id)
+                                if (restoreEntry.ID == entry.ID)
                                 {
                                     newEntry.Length = this.RestoreEntry(restoreEntry, 0, inRestoreBundle, newData);
                                     replaced = true;
@@ -1508,7 +1509,7 @@ namespace PDBundleModPatcher
                         }
                         else
                         {
-                            NameEntry ne = StaticStorage.Index.Id2Name(entry.Id);
+                            DatabaseEntry ne = StaticStorage.Index.EntryFromID(entry.ID);
                             if (File.Exists(Path.Combine(this._assetFolder, "asset_backups", ne.ToString())))
                             {
                                 using (FileStream importFS = new FileStream(Path.Combine(this._assetFolder, "asset_backups", ne.ToString()), FileMode.Open, FileAccess.Read))
@@ -1531,14 +1532,14 @@ namespace PDBundleModPatcher
                         }
                     }
 
-                    if (this._rewriteItems[entry.Id].priorityBundleRewriteItem != new BundleRewriteItem())
+                    if (this._rewriteItems[entry.ID].priorityBundleRewriteItem != new BundleRewriteItem())
                     {
-                        newEntry.Length = this.WriteZipEntry(entry, inBundle, newData, this._rewriteItems[entry.Id].priorityBundleRewriteItem);
+                        newEntry.Length = this.WriteZipEntry(entry, inBundle, newData, this._rewriteItems[entry.ID].priorityBundleRewriteItem);
                         firstpatched = true;
                         replaced = true;
                     }
 
-                    foreach (var rewriteItem in this._rewriteItems[entry.Id].BundleRewriteItem_queue)
+                    foreach (var rewriteItem in this._rewriteItems[entry.ID].BundleRewriteItem_queue)
                     {
                         if (rewriteItem.toRemove)
                             continue;
@@ -1636,13 +1637,15 @@ namespace PDBundleModPatcher
                 FileMode.OpenOrCreate,
                 FileAccess.Write);
             var outHeaderBr = new BinaryWriter(outHeaderStream);
+            /*
             outHeader.WriteHeader(outHeaderBr);
-            foreach (BundleEntry entry in outHeader.Entries)
-            {
+            foreach (PackageFileEntry entry in outHeader.Entries)
                 entry.WriteEntry(outHeaderBr, outHeader.HasLengthField);
-            }
 
             outHeader.WriteFooter(outHeaderBr);
+            */
+            outHeader.Write(outHeaderBr);
+
             outHeaderBr.Close();
             outHeaderStream.Close();
             File.Delete(Path.Combine(this._assetFolder, bundleId + ".bundle"));
@@ -1670,7 +1673,7 @@ namespace PDBundleModPatcher
 
             if (item.Ids == null)
             {
-                item.Ids = StaticStorage.Index.Entry2Id(
+                item.Ids = StaticStorage.Index.IDFromEntry(
                         item.BundlePath,
                         item.BundleExtension,
                         item.BundleLanguage,
@@ -1681,16 +1684,16 @@ namespace PDBundleModPatcher
             foreach (string file in Directory.EnumerateFiles(this._assetFolder, "*_h.bundle"))
             {
                 string bundlePath = file.Replace("_h.bundle", string.Empty);
-                var header = new BundleHeader();
-                if (!header.Load(bundlePath))
+                var header = new PackageHeader();
+                if (!header.Load(file))
                 {
                     this.Error = "Failed to parse bundle header: " + bundlePath;
                     return false;
                 }
 
-                foreach (BundleEntry entry in header.Entries)
+                foreach (PackageFileEntry entry in header.Entries)
                 {
-                    if (item.Ids.Contains(entry.Id) && entry.Length > 0)
+                    if (item.Ids.Contains(entry.ID) && entry.Length > 0)
                     {
                         bundleId = Path.GetFileNameWithoutExtension(bundlePath);
 
@@ -1729,8 +1732,8 @@ namespace PDBundleModPatcher
         private bool RetrieveFile(string bundleId, out MemoryStream data)
         {
             data = new MemoryStream();
-            var inHeader = new BundleHeader();
-            if (!inHeader.Load(Path.Combine(this._assetFolder, "asset_backups", bundleId)))
+            var inHeader = new PackageHeader();
+            if (!inHeader.Load(Path.Combine(this._assetFolder, "asset_backups", bundleId + ".bundle")))
                 return false;
 
             var inBundle = new FileStream(Path.Combine(this._assetFolder, bundleId + ".bundle"), FileMode.Open, FileAccess.Read);
@@ -1738,7 +1741,7 @@ namespace PDBundleModPatcher
             int currentEntry = 1;
             int entryCount = inHeader.Entries.Count;
 
-            foreach (BundleEntry entry in inHeader.Entries)
+            foreach (PackageFileEntry entry in inHeader.Entries)
             {
                 if (currentEntry % 100 == 0)
                 {
@@ -1747,7 +1750,7 @@ namespace PDBundleModPatcher
                         (int)((currentEntry / (float)entryCount) * 100.0f));
                 }
 
-                if (this._rewriteItems.ContainsKey(entry.Id))
+                if (this._rewriteItems.ContainsKey(entry.ID))
                 {
                     inBundle.Seek(entry.Address, SeekOrigin.Begin);
                     long readLength = entry.Length == -1 ? inBundle.Length - inBundle.Position : entry.Length;
@@ -1790,25 +1793,23 @@ namespace PDBundleModPatcher
                 return true;
             }
 
-            var inHeader = new BundleHeader();
-            var inRestoreHeader = new BundleHeader();
-            Dictionary<uint, BundleEntry> inRestoreDictionary = new Dictionary<uint, BundleEntry>();
-            if (!inHeader.Load(Path.Combine(this._assetFolder, bundleId)))
-            {
-                return false;
-            }
-
-            if (!inRestoreHeader.Load(Path.Combine(this._assetFolder, "asset_backups", bundleId)))
+            var inHeader = new PackageHeader();
+            var inRestoreHeader = new PackageHeader();
+            Dictionary<uint, PackageFileEntry> inRestoreDictionary = new Dictionary<uint, PackageFileEntry>();
+            if (!inHeader.Load(Path.Combine(this._assetFolder, bundleId + ".bundle")))
                 return false;
 
-            foreach (BundleEntry entry in inRestoreHeader.Entries)
+            if (!inRestoreHeader.Load(Path.Combine(this._assetFolder, "asset_backups", bundleId + ".bundle")))
+                return false;
+
+            foreach (PackageFileEntry entry in inRestoreHeader.Entries)
             {
-                if (!inRestoreDictionary.ContainsKey(entry.Id))
-                    inRestoreDictionary.Add(entry.Id, entry);
+                if (!inRestoreDictionary.ContainsKey(entry.ID))
+                    inRestoreDictionary.Add(entry.ID, entry);
             }
 
 
-            var outHeader = new BundleHeader();
+            var outHeader = new PackageHeader();
             outHeader.Footer = inHeader.Footer;
             outHeader.Header = inHeader.Header;
             outHeader.HasLengthField = inHeader.HasLengthField;
@@ -1821,7 +1822,7 @@ namespace PDBundleModPatcher
             int currentAddress = 0;
             int currentEntry = 1;
             int entryCount = inHeader.Entries.Count;
-            foreach (BundleEntry entry in inHeader.Entries)
+            foreach (PackageFileEntry entry in inHeader.Entries)
             {
                 if (currentEntry % 100 == 0)
                 {
@@ -1830,16 +1831,16 @@ namespace PDBundleModPatcher
                         (int)((currentEntry / (float)entryCount) * 100.0f));
                 }
 
-                var newEntry = new BundleEntry();
-                newEntry.Id = entry.Id;
+                var newEntry = new PackageFileEntry();
+                newEntry.ID = entry.ID;
                 newEntry.Length = entry.Length;
                 newEntry.Address = (uint)currentAddress;
                 bool replaced = false;
 
 
                 foreach (int length in from rewriteItem in mod.ItemQueue
-                                       where rewriteItem.Ids.Contains(entry.Id)
-                                       select this.RestoreEntry(inRestoreDictionary[entry.Id], (uint)currentAddress, inRestoreBundle, outBundle))
+                                       where rewriteItem.Ids.Contains(entry.ID)
+                                       select this.RestoreEntry(inRestoreDictionary[entry.ID], (uint)currentAddress, inRestoreBundle, outBundle))
                 {
                     currentAddress += length;
                     newEntry.Length = length;
@@ -1870,13 +1871,16 @@ namespace PDBundleModPatcher
                 FileMode.OpenOrCreate,
                 FileAccess.Write);
             var outHeaderBr = new BinaryWriter(outHeaderStream);
+
+            /*
             outHeader.WriteHeader(outHeaderBr);
-            foreach (BundleEntry entry in outHeader.Entries)
-            {
+            foreach (PackageFileEntry entry in outHeader.Entries)
                 entry.WriteEntry(outHeaderBr, outHeader.HasLengthField);
-            }
 
             outHeader.WriteFooter(outHeaderBr);
+            */
+            outHeader.Write(outHeaderBr);
+
             outHeaderBr.Close();
             outHeaderStream.Close();
             File.Delete(Path.Combine(this._assetFolder, bundleId + ".bundle"));
@@ -1932,7 +1936,7 @@ namespace PDBundleModPatcher
         /// <returns>
         /// How many bytes were written to the stream.
         /// </returns>
-        private int WriteZipEntry(BundleEntry bundleEntry, Stream input, Stream output, BundleRewriteItem rewriteItem)
+        private int WriteZipEntry(PackageFileEntry bundleEntry, Stream input, Stream output, BundleRewriteItem rewriteItem)
         {
             if (rewriteItem.SourceFile != null)
             {
@@ -2016,7 +2020,7 @@ namespace PDBundleModPatcher
         /// <returns>
         /// How many bytes were written to the stream.
         /// </returns>
-        private int RestoreEntry(BundleEntry restoreBundleEntry, uint currentAddress, Stream input, Stream output)
+        private int RestoreEntry(PackageFileEntry restoreBundleEntry, uint currentAddress, Stream input, Stream output)
         {
 
             var br = new BinaryReader(input);
@@ -2513,7 +2517,7 @@ namespace PDBundleModPatcher
             switch (type.ToLower())
             {
                 case "hash":
-                    returnData = BitConverter.GetBytes(DieselBundle.Utils.Hash64.HashString(data));
+                    returnData = BitConverter.GetBytes(Hash64.HashString(data));
                     break;
                 case "text":
                 case "string":
@@ -2598,8 +2602,8 @@ namespace PDBundleModPatcher
             //repair can be attempted, no guarantees
             //repair.. it's fucked.
 
-            var bundle = new BundleHeader();
-            if (!bundle.Load(bundleId))
+            var bundle = new PackageHeader();
+            if (!bundle.Load(bundleId + ".bundle"))
             {
                 throw new Exception("Corrupted BundleHeader");
             }
@@ -2607,9 +2611,9 @@ namespace PDBundleModPatcher
             //repair can be attempted, no guarantees
             //repair would consist of checking against a backup, given it exists
 
-            foreach (BundleEntry be in bundle.Entries)
+            foreach (PackageFileEntry be in bundle.Entries)
             {
-                NameEntry ne = StaticStorage.Index.Id2Name(be.Id);
+                DatabaseEntry ne = StaticStorage.Index.EntryFromID(be.ID);
                 if (ne == null)
                 {
                     throw new Exception("Invalid NameEntry");
@@ -2630,12 +2634,12 @@ namespace PDBundleModPatcher
 
                 uint prevID = 0;
 
-                foreach (BundleEntry entry in bundle.Entries)
+                foreach (PackageFileEntry entry in bundle.Entries)
                 {
-                    if (entry.Id < prevID)
+                    if (entry.ID < prevID)
                         throw new Exception("Invalid BundleEntry not sorted by ID");
 
-                    prevID = entry.Id;
+                    prevID = entry.ID;
                 }
 
             }
@@ -2645,7 +2649,7 @@ namespace PDBundleModPatcher
 
                 uint prevAddress = 0;
 
-                foreach (BundleEntry entry in bundle.Entries)
+                foreach (PackageFileEntry entry in bundle.Entries)
                 {
                     if (entry.Address < prevAddress)
                         throw new Exception("Invalid BundleEntry not sorted by Address");

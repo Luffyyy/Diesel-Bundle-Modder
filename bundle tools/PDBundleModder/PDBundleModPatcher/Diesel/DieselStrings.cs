@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DieselEngineFormats.Bundle;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace PDBundleModPatcher
 
                     br.BaseStream.Position = prevPos;
 
-                    string Key = (StaticStorage.Known_Index.GetAny(stringHash) != null ? StaticStorage.Known_Index.GetAny(stringHash) : stringHash.ToString());
+                    string Key = (HashIndex.GetUnhashed(stringHash) != null ? HashIndex.GetUnhashed(stringHash) : stringHash.ToString());
 
                     if(this._strings.ContainsKey(Key))
                         this._strings[Key] = str.ToString();

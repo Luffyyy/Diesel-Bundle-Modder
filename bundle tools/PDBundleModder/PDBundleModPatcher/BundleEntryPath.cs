@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DieselEngineFormats.Bundle;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -86,9 +87,9 @@ namespace PDBundleModPatcher
 
             StringBuilder path = new StringBuilder();
 
-            string path_string = StaticStorage.Known_Index.GetPath(this.EntryPath);
+            string path_string = HashIndex.GetUnhashed(this.EntryPath);
             string language_string = (this.EntryLanguage != 0 ? this.EntryLanguage.ToString() : "");
-            string extension_string = StaticStorage.Known_Index.GetExtension(this.EntryExtension);
+            string extension_string = HashIndex.GetUnhashed(this.EntryExtension);
 
             if (path_string == null || language_string == null || extension_string == null)
                 return "";

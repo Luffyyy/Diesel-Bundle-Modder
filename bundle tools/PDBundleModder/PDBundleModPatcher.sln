@@ -1,14 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDBundleModPatcher", "PDBundleModPatcher\PDBundleModPatcher.csproj", "{C90DA7FE-E96B-48E8-8292-503587E95DE4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2} = {EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DieselBundle", "DieselBundle\DieselBundle.csproj", "{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundBankParser", "PD2SoundBankParser\SoundBankParser.csproj", "{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}"
 EndProject
@@ -54,29 +52,6 @@ Global
 		{C90DA7FE-E96B-48E8-8292-503587E95DE4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C90DA7FE-E96B-48E8-8292-503587E95DE4}.Release|x86.ActiveCfg = Release|x86
 		{C90DA7FE-E96B-48E8-8292-503587E95DE4}.Release|x86.Build.0 = Release|x86
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release LINUX|Any CPU.ActiveCfg = Release LINUX|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release LINUX|Any CPU.Build.0 = Release LINUX|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release LINUX|Mixed Platforms.ActiveCfg = Release LINUX|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release LINUX|Mixed Platforms.Build.0 = Release LINUX|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release LINUX|x86.ActiveCfg = Release LINUX|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release LINUX|x86.Build.0 = Release LINUX|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release WIN|Any CPU.ActiveCfg = Release Win|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release WIN|Any CPU.Build.0 = Release Win|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release WIN|Mixed Platforms.ActiveCfg = Release Win|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release WIN|Mixed Platforms.Build.0 = Release Win|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release WIN|x86.ActiveCfg = Release Win|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release WIN|x86.Build.0 = Release Win|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release|x86.ActiveCfg = Release|Any CPU
-		{0A37D67C-EDB1-4AEF-BC10-B9B8E255F3C7}.Release|x86.Build.0 = Release|Any CPU
 		{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA5BA96B-223A-4EE2-97BA-629AAC5EE9A2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -127,5 +102,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {008676FC-B5FC-4FAE-9800-DD495960869D}
 	EndGlobalSection
 EndGlobal
