@@ -77,6 +77,10 @@
             this.SpecificVersion = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.AddedFilesView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.bundleRewriteItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label9 = new System.Windows.Forms.Label();
             this.ModNameEdit = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -189,10 +193,6 @@
             this.showPDModFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInModoverrideFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInBLTModsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.bundleRewriteItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.bundleModBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabs.SuspendLayout();
             this.ApplyTab.SuspendLayout();
@@ -202,6 +202,7 @@
             this.splitContainer1.SuspendLayout();
             this.CreateTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AddedFilesView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bundleRewriteItemBindingSource)).BeginInit();
             this.OptionsTab.SuspendLayout();
             this.OptionsFlowLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.programIcon)).BeginInit();
@@ -218,7 +219,6 @@
             this.tabList.SuspendLayout();
             this.flpList.SuspendLayout();
             this.modContextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bundleRewriteItemBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bundleModBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -794,6 +794,35 @@
             this.AddedFilesView.Size = new System.Drawing.Size(772, 210);
             this.AddedFilesView.TabIndex = 32;
             // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "SourceFile";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Source File";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Width = 340;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "ReplacementFile";
+            this.dataGridViewTextBoxColumn2.HeaderText = "Replacement File";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            this.dataGridViewTextBoxColumn2.Width = 340;
+            // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            this.dataGridViewCheckBoxColumn1.DataPropertyName = "hasVariables";
+            this.dataGridViewCheckBoxColumn1.HeaderText = "has Variables";
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.ReadOnly = true;
+            this.dataGridViewCheckBoxColumn1.Width = 88;
+            // 
+            // bundleRewriteItemBindingSource
+            // 
+            this.bundleRewriteItemBindingSource.DataSource = typeof(PDBundleModPatcher.BundleRewriteItem);
+            // 
             // label9
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -1238,6 +1267,7 @@
             this.AboutLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.AboutLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.AboutLabel.LinkArea = new System.Windows.Forms.LinkArea(134, 48);
             this.AboutLabel.Location = new System.Drawing.Point(265, 154);
             this.AboutLabel.MinimumSize = new System.Drawing.Size(0, 200);
@@ -2064,35 +2094,6 @@
             this.showInBLTModsFolderToolStripMenuItem.Text = "Show in BLT mods folder";
             this.showInBLTModsFolderToolStripMenuItem.Click += new System.EventHandler(this.showInBLTModsFolderToolStripMenuItem_Click);
             // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "SourceFile";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Source File";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            this.dataGridViewTextBoxColumn1.Width = 340;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "ReplacementFile";
-            this.dataGridViewTextBoxColumn2.HeaderText = "Replacement File";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            this.dataGridViewTextBoxColumn2.Width = 340;
-            // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            this.dataGridViewCheckBoxColumn1.DataPropertyName = "hasVariables";
-            this.dataGridViewCheckBoxColumn1.HeaderText = "has Variables";
-            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            this.dataGridViewCheckBoxColumn1.ReadOnly = true;
-            this.dataGridViewCheckBoxColumn1.Width = 88;
-            // 
-            // bundleRewriteItemBindingSource
-            // 
-            this.bundleRewriteItemBindingSource.DataSource = typeof(PDBundleModPatcher.BundleRewriteItem);
-            // 
             // bundleModBindingSource
             // 
             this.bundleModBindingSource.DataSource = typeof(PDBundleModPatcher.BundleMod);
@@ -2125,6 +2126,7 @@
             this.CreateTab.ResumeLayout(false);
             this.CreateTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AddedFilesView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bundleRewriteItemBindingSource)).EndInit();
             this.OptionsTab.ResumeLayout(false);
             this.OptionsFlowLayout.ResumeLayout(false);
             this.OptionsFlowLayout.PerformLayout();
@@ -2150,7 +2152,6 @@
             this.flpList.ResumeLayout(false);
             this.flpList.PerformLayout();
             this.modContextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.bundleRewriteItemBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bundleModBindingSource)).EndInit();
             this.ResumeLayout(false);
 

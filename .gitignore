@@ -34,3 +34,9 @@ bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/obj/Release LINUX/
 bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/bin/Debug/
 
 bundle tools/PDBundleModder/PD2SoundBankParser/obj/Debug/
+
+bundle tools/PDBundleModder_Updater/PDBundleModder_Updater/obj/Release/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/obj/Release/
+
+bundle tools/PDBundleModder/PDBundleModPatcher/bin/Release/

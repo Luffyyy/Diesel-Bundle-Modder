@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DieselEngineFormats.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +44,10 @@ namespace PDBundleModPatcher
                     sw_log.WriteLine("====");
                     sw_log.WriteLine(DateTime.Now.ToShortDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString() + " Unhandled Thread Exception");
                     sw_log.WriteLine("====");
+                    sw_log.WriteLine("Is Linux = " + General.IsLinux);
+                    sw_log.WriteLine("====");
                     sw_log.WriteLine(e.Exception.ToString());
+
 
                 }
             }

@@ -742,12 +742,32 @@ namespace PDBundleModPatcher
         /// </param>
         private void AssetFolderButtonClick(object sender, EventArgs e)
         {
-            //Does this work on linux?
-            var folderDialog = new CommonOpenFileDialog();
-            folderDialog.IsFolderPicker = true;
-            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (General.IsLinux)
             {
-                StaticStorage.settings.AssetsFolder = folderDialog.FileName;
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                if(fbd.ShowDialog() == DialogResult.OK)
+                {
+                    StaticStorage.settings.AssetsFolder = fbd.SelectedPath;
+                    if (this.TestAssetsFolder())
+                    {
+                        this.SaveSettings();
+                        this.LoadHashList();
+                    }
+                }
+                return;
+            }
+            //Weirdly Mono doesn't like the code being here but is okay with it being on a different method
+            else
+                AssetsFolderBrowseWin();
+        }
+
+        private void AssetsFolderBrowseWin()
+        {
+            CommonOpenFileDialog cfd = new CommonOpenFileDialog();
+            cfd.IsFolderPicker = true;
+            if (cfd.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                StaticStorage.settings.AssetsFolder = cfd.FileName;
                 if (this.TestAssetsFolder())
                 {
                     this.SaveSettings();
@@ -1382,7 +1402,7 @@ namespace PDBundleModPatcher
                 HashIndex.Load(HashlistFile);
                 this.HashlistLoaded = true;
                 watch.Stop();
-                StaticStorage.log.WriteLine("Known_Index.Load - " + watch.ElapsedMilliseconds + " ms");
+                StaticStorage.log.WriteLine("HashIndex.Load - " + watch.ElapsedMilliseconds + " ms");
             }
 
             SortedSet<String> paths = new SortedSet<String>();
@@ -2384,9 +2404,7 @@ namespace PDBundleModPatcher
                 this.OpenModButton.Enabled = this.savedStateOpenMod;
 
                 if (this.verifyCorruptedBundlesCheckCheckBox.Checked)
-                {
-                    System.Diagnostics.Process.Start("steam://validate/" + StaticStorage.settings.GameSteamID);
-                }
+                    Process.Start("steam://validate/" + StaticStorage.settings.GameSteamID);
 
                 this.verifyCorruptedBundlesCheckCheckBox.Enabled = true;
                 this.corruptedShowOnlyCorrupted_checkbox.Enabled = true;
@@ -2407,9 +2425,7 @@ namespace PDBundleModPatcher
             if (!File.Exists(SettingsFile))
                 File.Create(SettingsFile).Close();
             using (var fs = new FileStream(SettingsFile, FileMode.Truncate, FileAccess.Write))
-            {
                 serializer.Serialize(fs, StaticStorage.settings);
-            }
         }
 
         /// <summary>
@@ -2456,24 +2472,22 @@ namespace PDBundleModPatcher
                 }
             }
             else
-            {
                 return (ValidAssets = false);
-            }
 
             //int all_count = Directory.GetFiles (StaticStorage.settings.AssetsFolder, "all_*_h.bundle").Length;
             //TestBundleForIDStrings("all_" + (all_count - 1).ToString())
-            bool linux = false;
-            if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe")) || (linux = File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_release"))))) //Payday 2
+            bool isLinux = General.IsLinux;
+            if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_win32_release.exe")) || (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "payday2_release"))))) //Payday 2
             {
-                StaticStorage.settings.Game = "PAYDAY 2" + (linux ? " [Linux]" : "");
-                StaticStorage.settings.GameShortName = "PAYDAY 2" + (linux ? " [Linux]" : "");
-                if (linux)
+                StaticStorage.settings.Game = "PAYDAY 2" + (isLinux ? " [Linux]" : "");
+                StaticStorage.settings.GameShortName = "PAYDAY 2" + (isLinux ? " [Linux]" : "");
+                if (isLinux)
                     StaticStorage.settings.GameProcess = "payday2_release";
                 else
                     StaticStorage.settings.GameProcess = "payday2_win32_release";
 
                 StaticStorage.settings.GameSteamID = 218620;
-                StaticStorage.settings.GameSupportsOverride = !linux;
+                StaticStorage.settings.GameSupportsOverride = !isLinux;
             }
             else if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "bundle_db.blb")) && File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "raid_win64_d3d9_release.exe"))) //Payday 2 Demo
             {
@@ -4246,11 +4260,27 @@ namespace PDBundleModPatcher
 
         private void CustomExtractClick(object sender, EventArgs e)
         {
-            var folderDialog = new CommonOpenFileDialog();
-            folderDialog.IsFolderPicker = true;
-            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (General.IsLinux)
             {
-                StaticStorage.settings.CustomExtractPath = folderDialog.FileName;
+                var fbd = new FolderBrowserDialog();
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    StaticStorage.settings.CustomExtractPath = fbd.SelectedPath;
+                    this.SaveSettings();
+                    this.txtExtractFolder.Text = StaticStorage.settings.CustomExtractPath;
+                }
+            }
+            else
+                CustomExtractBrowseWin();
+        }
+
+        private void CustomExtractBrowseWin()
+        {
+            var cfd = new CommonOpenFileDialog();
+            cfd.IsFolderPicker = true;
+            if (cfd.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                StaticStorage.settings.CustomExtractPath = cfd.FileName;
                 this.SaveSettings();
                 this.txtExtractFolder.Text = StaticStorage.settings.CustomExtractPath;
             }
