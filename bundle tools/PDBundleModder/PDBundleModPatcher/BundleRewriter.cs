@@ -561,9 +561,9 @@ namespace PDBundleModPatcher
             using (this.Zip = new ZipFile(this._zipPath))
             {
                 bool wasSuccessful = false;
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
 
 
                 if (!this.LocateChangeIds())
@@ -656,9 +656,9 @@ namespace PDBundleModPatcher
             using (this.Zip = new ZipFile(this._zipPath))
             {
                 bool wasSuccessful = false;
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
 
                 if (!this.LocateChangeIds())
                     return;
@@ -763,9 +763,9 @@ namespace PDBundleModPatcher
             using (this.Zip = new ZipFile(this._zipPath))
             {
                 bool wasSuccessful = false;
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
-                this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
+                //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
 
                 if (!this.LocateChangeIds())
                     return;
@@ -1165,9 +1165,9 @@ namespace PDBundleModPatcher
         {
             this.Done = false;
             bool wasSuccessful = false;
-            this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
-            this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
-            this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
+            //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E646UL);
+            //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0xAB2664BF82E6460C);
+            //this._mod.ItemQueue.RemoveWhere(i => i.BundleExtension == 0x29104BC4AC649965);
 
             if (!this.LocateChangeIds())
                 return;
