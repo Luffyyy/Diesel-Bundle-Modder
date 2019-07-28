@@ -493,11 +493,11 @@ namespace PDBundleModPatcher.ModManagement
         public void LoadBLTModManagement()
         {
             //Read mods_status
-            if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "mods", "saves", "mod_manager.txt")))
+            if (File.Exists(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "mods", "saves", "old_mod_manager.txt")))
             {
                 Dictionary<string, bool> statuses = new Dictionary<string, bool>();
 
-                FileStream bltMod_managerfs = new FileStream(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "mods", "saves", "mod_manager.txt"), FileMode.Open);
+                FileStream bltMod_managerfs = new FileStream(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "mods", "saves", "old_mod_manager.txt"), FileMode.Open);
                 using (StreamReader bltMod_managersr = new StreamReader(bltMod_managerfs))
                 {
                     try
@@ -507,7 +507,7 @@ namespace PDBundleModPatcher.ModManagement
                     catch (Exception exc)
                     {
                         //blt_mod.Description += " Failed parsing mods.txt of " + Path.GetFileNameWithoutExtension(bltmod) + ", Message: " + exc.Message;
-                        StaticStorage.log.WriteLine("ERROR: Failed parsing mod_manager.txt, message: " + exc.Message);
+                        StaticStorage.log.WriteLine("ERROR: Failed parsing old_mod_manager.txt, message: " + exc.Message);
                     }
                 }
 
@@ -533,7 +533,7 @@ namespace PDBundleModPatcher.ModManagement
                 statuses.Add("mods/" + Path.GetFileNameWithoutExtension(bltMod.file) + "/", bltMod.enabled);
             }
 
-            using (FileStream stream = File.Open(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "mods", "saves", "mod_manager.txt"), FileMode.Create))
+            using (FileStream stream = File.Open(Path.Combine(StaticStorage.settings.AssetsFolder, "..", "mods", "saves", "old_mod_manager.txt"), FileMode.Create))
             {
                 using (StreamWriter sw = new StreamWriter(stream))
                 {
